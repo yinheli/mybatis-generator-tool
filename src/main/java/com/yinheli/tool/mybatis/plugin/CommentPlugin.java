@@ -7,8 +7,12 @@ import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.xml.Attribute;
+import org.mybatis.generator.api.dom.xml.Element;
+import org.mybatis.generator.api.dom.xml.TextElement;
+import org.mybatis.generator.api.dom.xml.XmlElement;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yinheli
@@ -73,6 +77,20 @@ public class CommentPlugin extends PluginAdapter {
         return comment(method, introspectedTable, introspectedColumn);
     }
 
+    @Override
+    public boolean sqlMapResultMapWithoutBLOBsElementGenerated(
+            XmlElement element, IntrospectedTable introspectedTable) {
+        commentResultMap(element, introspectedTable);
+        return true;
+    }
+
+    @Override
+    public boolean sqlMapResultMapWithBLOBsElementGenerated(XmlElement element,
+                                                            IntrospectedTable introspectedTable) {
+        commentResultMap(element, introspectedTable);
+        return true;
+    }
+
     private boolean comment(JavaElement element, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
         element.getJavaDocLines().clear();
         element.addJavaDocLine("/**");
@@ -102,6 +120,80 @@ public class CommentPlugin extends PluginAdapter {
         element.addJavaDocLine(" * @author yinheli");
         element.addJavaDocLine(" */");
         return true;
+    }
+
+    private void commentResultMap(XmlElement element,
+                          IntrospectedTable introspectedTable) {
+        List<Element> es = element.getElements();
+        if (es.isEmpty()) {
+            return;
+        }
+
+        String alias = introspectedTable.getTableConfiguration().getAlias();
+        int aliasLen = -1;
+        if (alias != null) {
+            aliasLen = alias.length() + 1;
+        }
+
+        Iterator<Element> it = es.iterator();
+
+        Map<Element, Element> map = new HashMap<Element, Element>();
+
+        while (it.hasNext()) {
+            Element e = it.next();
+
+            if (e instanceof TextElement) {
+                it.remove();
+                continue;
+            }
+
+            XmlElement el = (XmlElement) e;
+            List<Attribute> as = el.getAttributes();
+            if (as.isEmpty()) {
+                continue;
+            }
+
+            String col = null;
+            for (Attribute a : as) {
+                if (a.getName().equalsIgnoreCase("column")) {
+                    col = a.getValue();
+                    break;
+                }
+            }
+
+            if (col == null) {
+                continue;
+            }
+
+            if (aliasLen > 0) {
+                col = col.substring(aliasLen);
+            }
+
+            IntrospectedColumn ic = introspectedTable.getColumn(col);
+            if (ic == null) {
+                continue;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            if (ic.getRemarks() != null && ic.getRemarks().length() > 1) {
+                sb.append("<!-- ");
+                sb.append(ic.getRemarks());
+                sb.append(" -->");
+                map.put(el, new TextElement(sb.toString()));
+            }
+        }
+
+        if (map.isEmpty()) {
+            return;
+        }
+
+        Set<Element> set = map.keySet();
+        for (Element e : set) {
+            int id = es.indexOf(e);
+            es.add(id, map.get(e));
+            // es.add(id, new TextElement(""));
+        }
+
     }
 }
 

@@ -22,3 +22,33 @@ dependencies {
     compile 'io.swagger:swagger-annotations:1.5.10'
     testCompile 'junit:junit:4.12'
 }
+
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest {
+        attributes 'Main-Class': 'com.yinheli.tool.mybatis.cli.MybatisToolCLI',
+                   'Git-Revision': 'git rev-parse HEAD'.execute().text.trim()
+    }
+}
+
+task dist(dependsOn: jar) {
+
+    jar.doLast {
+
+        delete {
+            "$buildDir/dist"
+        }
+
+        copy {
+            from "$buildDir/libs"
+            into "$buildDir/dist"
+        }
+
+        copy {
+            from 'mybatis-generator-tool.sh'
+            into "$buildDir/dist"
+        }
+
+    }
+
+}

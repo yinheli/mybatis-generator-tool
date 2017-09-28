@@ -4,8 +4,8 @@
   "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
   <context id="Mysql" targetRuntime="MyBatis3">
-    <plugin type="com.elegantpay.tool.CommentPlugin" />
-    <plugin type="com.elegantpay.tool.MapperPlugin" />
+    <plugin type="com.yinheli.tool.mybatis.plugin.CommentPlugin" />
+    <plugin type="com.yinheli.tool.mybatis.plugin.MapperPlugin" />
     <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
 
     <commentGenerator>
@@ -16,25 +16,33 @@
 
     <jdbcConnection
       driverClass="com.mysql.jdbc.Driver"
-      connectionURL="${connectionURL}"
-      userId="${userId}"
-      password="${password}">
+      connectionURL="jdbc:mysql://127.0.0.1:3306/test?useUnicode=true"
+      userId="root"
+      password="">
     </jdbcConnection>
 
     <javaTypeResolver >
       <property name="forceBigDecimals" value="false" />
     </javaTypeResolver>
 
-    <javaModelGenerator targetPackage="${modelTargetPackage}" targetProject="${targetProject}">
+    <javaModelGenerator targetPackage="com.yinheli.model" targetProject="gen">
       <property name="enableSubPackages" value="true" />
       <property name="trimStrings" value="true" />
     </javaModelGenerator>
 
-    <!--<sqlMapGenerator targetPackage="test.xml" targetProject="${targetProject}">
+    <!-- xml and mapper -->
+    <sqlMapGenerator targetPackage="com.yinheli.sqlmap" targetProject="gen">
       <property name="enableSubPackages" value="true" />
-    </sqlMapGenerator>-->
+    </sqlMapGenerator>
 
-    <javaClientGenerator type="ANNOTATEDMAPPER" targetPackage="${mapperTargetPackage}" targetProject="${targetProject}">
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.yinheli.mapper" targetProject="gen">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+    <!-- xml and mapper -->
+
+    <!-- for only annoation -->
+    <!-- @see http://www.mybatis.org/generator/configreference/javaClientGenerator.html -->
+    <javaClientGenerator type="ANNOTATEDMAPPER" targetPackage="com.yinheli.mapper" targetProject="gen">
       <property name="enableSubPackages" value="true" />
     </javaClientGenerator>
 
