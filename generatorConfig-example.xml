@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <context id="Mysql" targetRuntime="MyBatis3">
+    <plugin type="com.elegantpay.tool.CommentPlugin" />
+    <plugin type="com.elegantpay.tool.MapperPlugin" />
+    <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+
+    <commentGenerator>
+      <property name="suppressAllComments" value="true"></property>
+      <property name="suppressDate" value="true"></property>
+      <property name="javaFileEncoding" value="utf-8"/>
+    </commentGenerator>
+
+    <jdbcConnection
+      driverClass="com.mysql.jdbc.Driver"
+      connectionURL="${connectionURL}"
+      userId="${userId}"
+      password="${password}">
+    </jdbcConnection>
+
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+    <javaModelGenerator targetPackage="${modelTargetPackage}" targetProject="${targetProject}">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+    <!--<sqlMapGenerator targetPackage="test.xml" targetProject="${targetProject}">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>-->
+
+    <javaClientGenerator type="ANNOTATEDMAPPER" targetPackage="${mapperTargetPackage}" targetProject="${targetProject}">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+
+    <table tableName="%">
+      <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+    </table>
+
+  </context>
+</generatorConfiguration>
