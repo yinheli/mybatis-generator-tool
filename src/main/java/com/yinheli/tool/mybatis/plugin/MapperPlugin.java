@@ -1,20 +1,16 @@
 package com.yinheli.tool.mybatis.plugin;
 
-import org.mybatis.generator.api.GeneratedXmlFile;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.Document;
 import org.mybatis.generator.api.dom.xml.XmlElement;
-import org.mybatis.generator.codegen.mybatis3.javamapper.elements.SelectByExampleWithoutBLOBsMethodGenerator;
 import org.mybatis.generator.codegen.mybatis3.javamapper.elements.annotated.AnnotatedSelectByExampleWithBLOBsMethodGenerator;
 import org.mybatis.generator.codegen.mybatis3.javamapper.elements.annotated.AnnotatedSelectByExampleWithoutBLOBsMethodGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.SelectByExampleWithBLOBsElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.SelectByExampleWithoutBLOBsElementGenerator;
-import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.SimpleSelectAllElementGenerator;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,6 +21,7 @@ public class MapperPlugin extends PluginAdapter {
     public boolean validate(List<String> warnings) {
         return true;
     }
+
     public boolean clientGenerated(Interface interfaze, TopLevelClass topLevelClass,
                                    IntrospectedTable introspectedTable) {
         FullyQualifiedJavaType returnType = new FullyQualifiedJavaType(
@@ -65,6 +62,9 @@ public class MapperPlugin extends PluginAdapter {
 
             interfaze.addMethod(method);
         }
+
+        interfaze.addAnnotation("@Mapper");
+        interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
 
         return super.clientGenerated(interfaze, topLevelClass, introspectedTable);
     }

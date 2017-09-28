@@ -43,13 +43,6 @@ public class CommentPlugin extends PluginAdapter {
     }
 
     @Override
-    public boolean clientGenerated(Interface interfaze, TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        interfaze.addAnnotation("@Mapper");
-        interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
-        return topLevelClassComment(interfaze, introspectedTable, false);
-    }
-
-    @Override
     public boolean providerGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         return topLevelClassComment(topLevelClass, introspectedTable, false);
     }
