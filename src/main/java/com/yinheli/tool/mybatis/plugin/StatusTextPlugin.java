@@ -6,6 +6,7 @@ import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.*;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class StatusTextPlugin extends PluginAdapter {
                                               ModelClassType modelClassType) {
 
         String remarks = introspectedColumn.getRemarks();
+        int jdbcType = introspectedColumn.getJdbcType();
 
         remarks = StringUtils.trimToNull(remarks);
 
@@ -52,8 +54,11 @@ public class StatusTextPlugin extends PluginAdapter {
             String[] kv = item.split(":");
             String k = StringUtils.trim(kv[0]);
             String v = StringUtils.trim(kv[1]);
-            mapInitSb.append("put(")
-                    .append(k).append(",")
+            mapInitSb.append("put(");
+            if (jdbcType == Types.TINYINT) {
+                mapInitSb.append("(byte)");
+            }
+            mapInitSb.append(k).append(",")
                     .append("\"").append(v).append("\");");
         }
         mapInitSb.append("}}");
@@ -77,7 +82,11 @@ public class StatusTextPlugin extends PluginAdapter {
         Method textMethod = new Method(String.format("%sText", method.getName()));
         textMethod.setReturnType(new FullyQualifiedJavaType(String.class.getCanonicalName()));
         textMethod.setVisibility(JavaVisibility.PUBLIC);
-        textMethod.addBodyLine(String.format("return %s.get(this.%s);", fieldName, introspectedColumn.getJavaProperty()));
+        if (jdbcType == Types.TINYINT) {
+            textMethod.addBodyLine(String.format("return %s.get((byte)this.%s);", fieldName, introspectedColumn.getJavaProperty()));
+        } else {
+            textMethod.addBodyLine(String.format("return %s.get(this.%s);", fieldName, introspectedColumn.getJavaProperty()));
+        }
 
         textMethod.addAnnotation(
             String.format("@ApiModelProperty(value = \"%s\")", remarks)
