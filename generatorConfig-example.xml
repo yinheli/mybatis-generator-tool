@@ -6,6 +6,7 @@
   <context id="Mysql" targetRuntime="MyBatis3">
     <plugin type="com.yinheli.tool.mybatis.plugin.CommentPlugin" />
     <plugin type="com.yinheli.tool.mybatis.plugin.MapperPlugin" />
+    <plugin type="com.yinheli.tool.mybatis.plugin.StatusTextPlugin" />
     <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
 
     <commentGenerator>

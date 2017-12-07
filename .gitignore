@@ -3,3 +3,4 @@
 *.iws
 out
 target
+generatorConfig-test.xml
