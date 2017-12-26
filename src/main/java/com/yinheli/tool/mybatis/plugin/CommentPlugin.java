@@ -1,6 +1,8 @@
 package com.yinheli.tool.mybatis.plugin;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.mybatis.generator.api.IntrospectedColumn;
@@ -52,7 +54,7 @@ public class CommentPlugin extends PluginAdapter {
                                        IntrospectedTable introspectedTable, ModelClassType modelClassType) {
         topLevelClass.addImportedType(new FullyQualifiedJavaType(ApiModelProperty.class.getCanonicalName()));
         String remarks = introspectedColumn.getRemarks();
-        remarks = remarks.replaceAll("\n", "\\\\n");
+        remarks = remarks.replaceAll("\n", "\\\\n").replaceAll("\"", "\\\\\"");
         String annoation = String.format("@ApiModelProperty(value = \"%s\")", remarks);
         field.addAnnotation(annoation);
         return comment(field, introspectedTable, introspectedColumn);

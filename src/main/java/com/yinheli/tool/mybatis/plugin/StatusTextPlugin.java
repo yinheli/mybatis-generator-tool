@@ -88,6 +88,7 @@ public class StatusTextPlugin extends PluginAdapter {
             textMethod.addBodyLine(String.format("return %s.get(this.%s);", fieldName, introspectedColumn.getJavaProperty()));
         }
 
+        remarks = remarks.replaceAll("\n", "\\\\n").replaceAll("\"", "\\\\\"");
         textMethod.addAnnotation(
             String.format("@ApiModelProperty(value = \"%s\")", remarks)
         );
